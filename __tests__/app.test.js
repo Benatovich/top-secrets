@@ -35,17 +35,11 @@ describe('top-secrets routes', () => {
   });
 
   it('logs in an existing user by creating a new user session', async () => {
-    const user = await UserService.create({
-      email: 'test@demo.com', 
-      password: 'OneTwoThreeFourFive'
-    });
+    const user = await UserService.create(mockUser);
 
     const res = await request(app)
       .post('/api/v1/users/sessions')
-      .send({
-        email: 'test@demo.com', 
-        password: 'OneTwoThreeFourFive'  
-      });
+      .send(mockUser);
 
     expect(res.body).toEqual({
       message: 'Logged in successfully',
