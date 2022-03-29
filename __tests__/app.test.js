@@ -2,6 +2,7 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+const UserService = require('../lib/services/UserService');
 
 describe('top-secrets routes', () => {
   beforeEach(() => {
@@ -23,7 +24,24 @@ describe('top-secrets routes', () => {
     });
   });
 
+  it.only('logs in an existing user by creating a new user session', async () => {
+    const user = await UserService.create({
+      email: 'test@demo.com', 
+      password: 'OneTwoThreeFourFive'
+    });
 
+    const res = await request(app)
+      .post('/api/v1/users/sessions')
+      .send({
+        email: 'test@demo.com', 
+        password: 'OneTwoThreeFourFive'  
+      });
+
+    expect(res.body).toEqual({
+      message: 'Logged in successfully',
+      user
+    });
+  });
 
 
 });
