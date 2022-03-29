@@ -11,4 +11,19 @@ describe('top-secrets routes', () => {
   afterAll(() => {
     pool.end();
   });
+
+  it('creates a user session/logs a user in via POST', async () => {
+    const res = await request(app)
+      .post('/api/v1/users/sessions')
+      .send({ email: 'test@demo.com', password: 'guest' });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      email: 'test@demo.com'
+    });
+  });
+
+
+
+  
 });
