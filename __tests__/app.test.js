@@ -4,6 +4,13 @@ const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
 
+const mockUser = {
+  firstName: 'Test',
+  lastName: 'User',
+  email: 'test@demo.com',
+  password: 'guest'
+};
+
 describe('top-secrets routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -16,15 +23,18 @@ describe('top-secrets routes', () => {
   it('creates a user', async () => {
     const res = await request(app)
       .post('/api/v1/users')
-      .send({ email: 'test@demo.com', password: 'guest' });
+      .send(mockUser);
+    const { firstName, lastName, email } = mockUser;
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      email: 'test@demo.com'
+      firstName,
+      lastName,
+      email
     });
   });
 
-  it.only('logs in an existing user by creating a new user session', async () => {
+  it('logs in an existing user by creating a new user session', async () => {
     const user = await UserService.create({
       email: 'test@demo.com', 
       password: 'OneTwoThreeFourFive'
