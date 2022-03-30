@@ -81,5 +81,12 @@ describe('top-secrets routes', () => {
     });
   });
 
-  
+  it.only('returns a list of secrets if logged in', async () => {
+    const [agent] = await registerAndLogin(mockUser);
+    const res = await agent.get('/api/v1/secrets');
+
+    expect(res.body).toEqual(200);
+  });
 });
+  
+
