@@ -81,11 +81,27 @@ describe('top-secrets routes', () => {
     });
   });
 
-  it.only('returns a list of secrets if logged in', async () => {
+  it('returns a list of secrets if logged in', async () => {
     const [agent] = await registerAndLogin(mockUser);
     const res = await agent.get('/api/v1/secrets');
 
     expect(res.body).toEqual(200);
+  });
+});
+
+it.only('creates a new secret if user is logged in', async () => {
+  const res = await request(app)
+    .post('/api/v1/secrets')
+    .send({
+      title: 'Northwoods',
+      description: 'false flag',
+    });
+  
+  expect(res.body).toEqual({
+    id: expect.any(String),
+    title: 'Northwoods',
+    description: 'false flag',
+    createdAt: expect.any(String)
   });
 });
   
