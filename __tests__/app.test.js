@@ -11,6 +11,18 @@ const mockUser = {
   password: 'guest'
 };
 
+const registerAndLogin = async (userProps = {}) => {
+  const password = userProps.password ?? mockUser.password;
+  
+  const agent = request.agent(app);
+  
+  const user = await UserService.create({ ...mockUser, ...userProps });
+
+  const { email } = user;
+  await agent.post('/api/v1/users/sessions').send({ email, password });
+  return [agent, user];
+};
+
 describe('top-secrets routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -47,5 +59,17 @@ describe('top-secrets routes', () => {
     });
   });
 
+  it('logs a user out by deleting the session', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.delete('/api/v1/users/sessions');
+    const expected = {
+      message: 'Signed out successfully',
+      success: true
+    };
 
+    expect(res.body).toEqual(expected);
+  });
+
+
+  
 });
