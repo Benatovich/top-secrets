@@ -70,6 +70,16 @@ describe('top-secrets routes', () => {
     expect(res.body).toEqual(expected);
   });
 
+  it('returns the current user', async () => {
+    const [agent, user] = await registerAndLogin();
+    const me = await agent.get('/api/v1/users/me');
+
+    expect(me.body).toEqual({
+      ...user,
+      exp: expect.any(Number),
+      iat: expect.any(Number),
+    });
+  });
 
   
 });
