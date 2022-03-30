@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const UserService = require('../lib/services/UserService');
+const Secret = require('../lib/models/Secret');
 
 const mockUser = {
   firstName: 'Test',
@@ -82,27 +83,36 @@ describe('top-secrets routes', () => {
   });
 
   it('returns a list of secrets if logged in', async () => {
+    await Secret.insert({ title: 'Northwoods', description: 'false flag' });
     const [agent] = await registerAndLogin(mockUser);
-    const res = await agent.get('/api/v1/secrets');
+    // const res = await agent.get('/api/v1/secrets');
+    const res = await agent
+      .get('/api/v1/secrets');
 
-    expect(res.body).toEqual(200);
-  });
-});
-
-it.only('creates a new secret if user is logged in', async () => {
-  const res = await request(app)
-    .post('/api/v1/secrets')
-    .send({
+    expect(res.body).toEqual([{
+      id: expect.any(String),
       title: 'Northwoods',
       description: 'false flag',
+      createdAt: expect.any(String)
+    }]);
+  });
+
+  it('creates a new secret if user is logged in', async () => {
+    const res = await request(app)
+      .post('/api/v1/secrets')
+      .send({
+        title: 'Northwoods',
+        description: 'false flag',
+      });
+    
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      title: 'Northwoods',
+      description: 'false flag',
+      createdAt: expect.any(String)
     });
-  
-  expect(res.body).toEqual({
-    id: expect.any(String),
-    title: 'Northwoods',
-    description: 'false flag',
-    createdAt: expect.any(String)
   });
 });
+
   
 
